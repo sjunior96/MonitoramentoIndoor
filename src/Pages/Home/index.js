@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 //import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { Text, TextInput, View, StyleSheet, LayoutAnimation, Platform, UIManager, TouchableOpacity, Image } from 'react-native';
+import { Text, TextInput, View, StyleSheet, LayoutAnimation, Platform, UIManager, TouchableOpacity, Image, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { FlatList } from 'react-native-gesture-handler';
 
 //Cores do IBTI:
 // #F6A100  AMARELO
@@ -14,6 +17,10 @@ export default function Home() {
     //Inicialização das variáveis
     const [expanded, setExpanded] = useState(false); //Controla o estado dos detalhes (expanded, collapsed)
     const [frequencyCounter, setFrequencyCounter] = useState(0);
+    const [devices, setDevices] = useState([
+        { key: 1, name: 'Dispositivo 1', expanded: false },
+        { key: 2, name: 'Dispositivo 2', expanded: false }
+    ]);
 
     //Para funcionar no Android sem bugs, no iOS já funciona corretamente
     if (Platform.OS === 'android') {
@@ -21,10 +28,31 @@ export default function Home() {
     }
 
     //Função que realiza a troca do estado dos detalhes do dispositivo, bem como tipo de animação realizada na troca de estado
-    function changeLayout() {
+    function changeLayout(searchKey) {
+        let expand; //Variável que vai receber a mudança do estado, e inserir no novo array
+        let devicesUpdated = []; //Novo Array de dispositivos que substituirá o array inicial, com os estados dinamicamente alterados
+        devices.forEach((device) => { //Laço para percorrer todos os dispositivos existentes
+            if(device.key === searchKey){ //Se a a chave recebida for igual a lida atualmente, inverte o estado do dispositivo atual
+                expand = !device.expanded;
+            }
+            else{//Se a chave não for igual, o estado deve ser false, para que apenas 1 dropdown esteja aberto por vez
+                expand = false; 
+            }
+            let list = { //Cada dispositivo será alterado como necessitar
+                key: device.key,
+                name: device.name,
+                expanded: expand
+            }
+            devicesUpdated.push(list); //Insere cada dispostivo no novo Array de dispositivos
+        });
+        setDevices(devicesUpdated); //Altera o array antigo, com o array novo, garantindo o funcionamento do dropdown para todos os dispositivos
+        //alert(JSON.stringify(devicesUpdated));
+
+
+        //alert(key);
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        let expand = !expanded; //Pegamos o oposto do valor atual de expanded, para abrir se estiver fechada, e fechar se estiver aberta
-        setExpanded(expand); //Passamos o novo valor para a expanded
+        //let expand = !expanded; //Pegamos o oposto do valor atual de expanded, para abrir se estiver fechada, e fechar se estiver aberta
+        //setExpanded(expand); //Passamos o novo valor para a expanded
     }
 
     //Função que aumenta a frequência
@@ -50,42 +78,50 @@ export default function Home() {
             </View>
 
             <View style={styles.devicesArea}>
-                <TouchableOpacity style={styles.device} onPress={() => { changeLayout() }}>
-                    <Icon name="chevron-down" color={'#FFF'} size={20}></Icon>
-                    <Text style={styles.deviceText}>Dispositivo 1</Text>
-                </TouchableOpacity>
-                <View style={{ height: expanded ? null : 0, overflow: 'hidden' }}>
-                    <View style={styles.deviceDetailsArea}>
-                        <Text>GRÁFICO</Text>
-                        <Image style={{ width: 300, height: 200 }} source={require('../../assets/images/lineGraphic.png')}></Image>
-                        <Text>Última Temperatura Registarda: 20°</Text>
-                        <Text>AQUI VÃO APARECER OS DADOS DO DISPOSITIVO 1</Text>
-                        <Text>AQUI VÃO APARECER OS DADOS DO DISPOSITIVO 1</Text>
-                    </View>
-
-                    <View style={styles.btnArea}>
-                        <TouchableOpacity style={styles.btnBuzzer}>
-                            <Icon name="bullhorn" color={'#FFF'} size={25}></Icon>
-                        </TouchableOpacity>
-
-                        <View style={styles.frequencyChange}>
-                            <TouchableOpacity style={styles.btnLessFrequency} onPress={() => { lessFrequency() }}>
-                                <Icon name="minus" color={'#FFF'} size={15}></Icon>
+                <FlatList
+                    contentContainerStyle={{ height: '100%', width: 1.0 * width }}
+                    data={devices}
+                    renderItem={({ item }) => (
+                        <View style={{
+                            width: 1 * width, alignItems: "center",
+                            justifyContent: "center"
+                        }}>
+                            <TouchableOpacity style={styles.device} onPress={() => {changeLayout(item.key)}}>
+                                <Icon name="chevron-down" color={'#FFF'} size={20}></Icon>
+                                <Text style={styles.deviceText}>{item.name}</Text>
                             </TouchableOpacity>
+                            <View style={{ height: item.expanded ? null : 0, overflow: 'hidden' }}>
+                                <View style={styles.deviceDetailsArea}>
+                                    <Text>Key: {item.key}</Text>
+                                    <Text>Nome: {item.name}</Text>
+                                    <Text>Expanded: {JSON.stringify(item.expanded)}</Text>
+                                    <Text>Última Temperatura Registarda: 20°</Text>
+                                    <Image style={{ width: 300, height: 200 }} source={require('../../assets/images/lineGraphic.png')}></Image>
+                                    <Text>Ol</Text>
+                                </View>
 
-                            <Text style={styles.frequencyInput}>{frequencyCounter}</Text>
+                                <View style={styles.btnArea}>
+                                    <TouchableOpacity style={styles.btnBuzzer}>
+                                        <Icon name="bullhorn" color={'#FFF'} size={25}></Icon>
+                                    </TouchableOpacity>
 
-                            <TouchableOpacity style={styles.btnMoreFrequency} onPress={() => { moreFrequency() }}>
-                                <Icon name="plus" color={'#FFF'} size={15}></Icon>
-                            </TouchableOpacity>
+                                    <View style={styles.frequencyChange}>
+                                        <TouchableOpacity style={styles.btnLessFrequency} onPress={() => { lessFrequency() }}>
+                                            <Icon name="minus" color={'#FFF'} size={15}></Icon>
+                                        </TouchableOpacity>
+
+                                        <Text style={styles.frequencyInput}>{frequencyCounter}</Text>
+
+                                        <TouchableOpacity style={styles.btnMoreFrequency} onPress={() => { moreFrequency() }}>
+                                            <Icon name="plus" color={'#FFF'} size={15}></Icon>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
                         </View>
-                    </View>
-                </View>
-
-                <TouchableOpacity style={styles.device}>
-                    <Icon name="chevron-down" color={'#FFF'} size={20}></Icon>
-                    <Text style={styles.deviceText}>Dispositivo 2</Text>
-                </TouchableOpacity>
+                    )}
+                    keyExtractor={item => item.id}
+                ></FlatList>
             </View>
 
         </View>
@@ -113,11 +149,12 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start"
     },
     device: {
+        alignItems: "center",
         flexDirection: "row",
         marginTop: 10,
-        padding: 15,
-        width: '95%',
-        height: '10%',
+        padding: 5,
+        width: 0.95 * width,
+        height: 0.075 * height,
         backgroundColor: '#00919C',
         borderRadius: 5
     },
