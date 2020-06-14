@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 //import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { Text, TextInput, View, StyleSheet, Switch, ScrollView, LayoutAnimation, Platform, UIManager, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { Text, TextInput, View, StyleSheet, Switch, ScrollView, Modal, LayoutAnimation, Platform, UIManager, TouchableOpacity, Image, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 
@@ -23,8 +23,9 @@ export default function Home() {
         { key: 1, name: 'Dispositivo 1', expanded: false, lightState: true },
         { key: 2, name: 'Dispositivo 2', expanded: false, lightState: false },
         { key: 3, name: 'Dispositivo 3', expanded: false, lightState: true },
-        { key: 4, name: 'Dispositivo 4', expanded: false, lightState: true }
+        { key: 4, name: 'Dispositivo 4', expanded: false, lightState: false }
     ]);
+    const [modalVisible, setModalVisible] = useState(false); //Define o modal como visivel ou não
 
     //const [isEnabled, setIsEnabled] = useState(false);
     //const toggleSwitch = () => setIsEnabled(previousState => !previousState);
@@ -80,61 +81,47 @@ export default function Home() {
     }
 
     return (
-        <LinearGradient
-            style={{ flex: 1, heigh: '100%' }}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            colors={['#00AB98', '#00AB98']}>
+        <View style={{ height: '100%', width: '100%' }}>
             <LinearGradient
+                style={{ flex: 1 }}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                colors={['#00AB98', '#03A63C']}
-                style={styles.difArea}>
-                <Text style={styles.difText}>CDT</Text>
-                <Text style={styles.difText}>10°</Text>
-            </LinearGradient>
+                colors={['#00AB98', '#00AB98']}>
+                <View style={{ height: '10%', width: '100%', marginBottom: 15 }}>
+                    <LinearGradient
+                        style={{ flex: 1, borderBottomLeftRadius: 30, borderBottomRightRadius: 30, alignItems: "center", justifyContent: "center", shadowColor: '#777', elevation: 2, borderWidth: 0.25 }}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        colors={['#00AB98', '#03A63C']}
+                    >
+                        <Text style={{ color: '#FFF', fontSize: 30, fontWeight: "bold" }}>CDT</Text>
+                        <Text style={{ color: '#FFF', fontSize: 30, fontWeight: "bold" }}>10°</Text>
+                    </LinearGradient>
+                </View>
 
-            <View style={styles.devicesArea}>
-                <FlatList
-                    contentContainerStyle={{ height: '100%', width: 1.0 * width }}
-                    data={devices}
-                    renderItem={({ item }) => (
-                        <View style={{
-                            width: 1 * width, alignItems: "center",
-                            justifyContent: "center"
-                        }}>
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: '#FFF', height: 0.075 * height, marginTop: 10, borderTopRightRadius: 5, borderTopLeftRadius: 5,
-                                    borderBottomLeftRadius: item.expanded ? 0 : 5, borderBottomRightRadius: item.expanded ? 0 : 5
-                                }} onPress={() => { changeLayout(item.key) }}>
-                                <LinearGradient
-                                    start={{ x: 0, y: 0 }}
-                                    end={{ x: 1, y: 0 }}
-                                    colors={['#F28705', '#F2E205']}
-                                    style={styles.device}>
-                                    {item.expanded ?
-                                        (<Icon name="chevron-up" color={'#FFF'} size={20}></Icon>)
-                                        :
-                                        (<Icon name="chevron-down" color={'#FFF'} size={20}></Icon>)
-                                    }
-                                    <Text style={styles.deviceText}>{item.name}</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-
-
-                            <ScrollView
-                                style={{
-                                    height: item.expanded ? 800 : 0,
-                                    //height: item.expanded ? 800 : 0,
-                                    overflow: 'hidden',
-                                    backgroundColor: '#FFF',
-                                    width: 0.95 * width
-                                }}>
-                                <View style={styles.deviceDetailsArea}>
-                                    <Text>Nome do dispositivo: {item.name}</Text>
-                                    <Text>Local: Sala de reunião</Text>
-                                    <Text>Última Temperatura Registarda: 20°</Text>
+                <ScrollView style={{ height: '82.5%' }}>
+                    <FlatList
+                        contentContainerStyle={{ height: '100%', width: 1.0 * width }}
+                        data={devices}
+                        renderItem={({ item }) => (
+                            <View style={{ alignItems: "center" }}>
+                                <TouchableOpacity style={{ height: 50, width: 0.95 * width, flexDirection: "row", borderTopLeftRadius: 5, borderTopRightRadius: 5, borderBottomRightRadius: item.expanded ? 0 : 5, borderBottomLeftRadius: item.expanded ? 0 : 5, backgroundColor: '#FFF' }} onPress={() => { changeLayout(item.key) }}>
+                                    <LinearGradient
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 0 }}
+                                        colors={['#F28705', '#F2E205']}
+                                        style={{ borderRadius: 5, width: '100%', flexDirection: "row", alignItems: "center" }}
+                                    >
+                                        {item.expanded ?
+                                            (<Icon style={{ marginLeft: 5 }} name="chevron-up" size={20} color={'#FFF'}></Icon>) : (<Icon style={{ marginLeft: 5 }} name="chevron-down" size={20} color={'#FFF'}></Icon>)
+                                        }
+                                        <Text style={{ marginLeft: 5, color: '#FFF', fontSize: 17, fontWeight: "bold" }}>{item.name}</Text>
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                                <View style={{ height: item.expanded ? 450 : 0, width: 0.95 * width, overflow: "hidden", marginBottom: 15, backgroundColor: '#FFF' }}>
+                                    <Text style={{ paddingLeft: 15, paddingTop: 15 }}>Nome do dispositivo: {item.name}</Text>
+                                    <Text style={{ paddingLeft: 15 }}>Local: Sala de reunião</Text>
+                                    <Text style={{ paddingLeft: 15 }}>Última Temperatura Registarda: 20°</Text>
                                     <View style={{ flexDirection: "row", width: 0.95 * width, alignItems: "center", justifyContent: "flex-end", padding: 20 }}>
                                         <Icon name="lightbulb" size={20}></Icon>
                                         <Switch
@@ -146,143 +133,93 @@ export default function Home() {
                                             value={item.lightState}
                                         />
                                     </View>
-                                    <View style={{ width: '100%', height: 220, alignItems: "center", justifyContent: "center", borderWidth: 1 }}>
+                                    <View style={{ width: '100%', height: 220, marginLeft: 0.095 * width, alignItems: "center", justifyContent: "center", borderWidth: 1 }}>
                                         <Image style={{ width: 300, height: 200 }} source={require('../../assets/images/lineGraphic.png')}></Image>
                                     </View>
-                                </View>
 
-                                <View style={styles.btnArea}>
-                                    <TouchableOpacity>
-                                        <LinearGradient
-                                            start={{ x: 0, y: 0 }}
-                                            end={{ x: 1, y: 0 }}
-                                            colors={['#03A63C', '#00AB98']}
-                                            style={styles.btnBuzzer}>
-                                            <Icon name="bullhorn" color={'#FFF'} size={25}></Icon>
-                                        </LinearGradient>
-                                    </TouchableOpacity>
-
-                                    <View style={styles.frequencyChange}>
-                                        <TouchableOpacity style={styles.btnLessFrequency} onPress={() => { lessFrequency() }}>
-                                            <Icon name="minus" color={'#FFF'} size={15}></Icon>
+                                    <View style={{ flexDirection: "row", height: 75, width: '100%', marginTop: 15, justifyContent: "flex-end" }}>
+                                        <TouchableOpacity>
+                                            <LinearGradient
+                                                start={{ x: 0, y: 0 }}
+                                                end={{ x: 1, y: 0 }}
+                                                colors={['#03A63C', '#00AB98']}
+                                                style={{ width: 50, height: 50, alignItems: "center", justifyContent: "center", marginRight: 15, padding: 10, backgroundColor: '#0B7534', borderRadius: 5 }}>
+                                                <Icon name="bullhorn" color={'#FFF'} size={25}></Icon>
+                                            </LinearGradient>
                                         </TouchableOpacity>
 
-                                        <Text style={styles.frequencyInput}>{frequencyCounter}</Text>
+                                        <View style={{ flexDirection: "row", marginRight: 15 }}>
+                                            <TouchableOpacity style={{ width: 50, height: 50, alignItems: "center", justifyContent: "center", padding: 5, borderWidth: 1, borderRightWidth: 0, borderColor: '#D9534F', backgroundColor: '#D9534F' }} onPress={() => { lessFrequency() }}>
+                                                <Icon name="minus" color={'#FFF'} size={15}></Icon>
+                                            </TouchableOpacity>
 
-                                        <TouchableOpacity style={styles.btnMoreFrequency} onPress={() => { moreFrequency() }}>
-                                            <Icon name="plus" color={'#FFF'} size={15}></Icon>
-                                        </TouchableOpacity>
+                                            <Text style={{ fontSize: 15, textAlign: "center", textAlignVertical: "center", width: 50, height: 50, borderWidth: 1, borderColor: '#999' }}>{frequencyCounter}</Text>
+
+                                            <TouchableOpacity style={{ width: 50, height: 50, alignItems: "center", justifyContent: "center", padding: 5, borderWidth: 1, borderLeftWidth: 0, borderColor: '#0B7534', backgroundColor: '#0B7534' }} onPress={() => { moreFrequency() }}>
+                                                <Icon name="plus" color={'#FFF'} size={15}></Icon>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 </View>
+                            </View>
+                        )}
+                        keyExtractor={item => item.id}
+                    ></FlatList>
+                </ScrollView>
+                <TouchableOpacity onPress={() => { setModalVisible(true) }} style={{ backgroundColor: '#FFF', height: '7.5%', shadowColor: '#777', elevation: 2, borderTopWidth: 0.25 }}>
+                    <LinearGradient
+                        style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        colors={['#00AB98', '#03A63C']}
+                    >
+                        <Icon name="plus" size={20} color={'#FFF'}></Icon>
+                        <Text style={{ color: '#FFF', fontSize: 18, fontWeight: "bold", marginLeft: 10 }}>Novo Dispositivo</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+            </LinearGradient>
 
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    Alert.alert("Modal has been closed.");
+                }}>
+                <ScrollView
+                    style={{ height: '100%', marginTop: '22%', borderTopLeftRadius: 25, borderTopRightRadius: 25, elevation: 2, borderTopWidth: 0.25, backgroundColor: '#FFF' }}
+                    contentContainerStyle={{ alignItems: "center", justifyContent: "center" }}>
+                    <LinearGradient
+                        style={{ flex: 1, alignItems: "center", justifyContent: "center", borderTopLeftRadius: 25, borderTopRightRadius: 25, borderTopWidth: 0.25, elevation: 2, shadowColor: '#777' }}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        colors={['#03A63C', '#00AB98']}
+                    >
+                        <View style={{ height: 1 * height, width: 1 * width, alignItems: "center", justifyContent: "center" }}>
+                            <TouchableOpacity style={{ width: '100%', alignItems: "center", justifyContent: "center" }} onPress={() => { setModalVisible(false) }}>
+                                <Icon name="chevron-down" size={30} color={'#FFF'}></Icon>
+                            </TouchableOpacity>
 
-                            </ScrollView>
+                            <Text style={{ fontSize: 25, marginBottom: 50 }}>Novo Dispositivo</Text>
+                            <Text style={{ width: 0.9 * width, textAlign: "left" }}>Key</Text>
+                            <TextInput style={{ height: 40, width: '90%', borderColor: 'gray', borderWidth: 1, marginBottom: 15 }}></TextInput>
+                            <Text style={{ width: '90%', textAlign: "left" }}>Nome do dispositivo</Text>
+                            <TextInput style={{ height: 40, width: '90%', borderColor: 'gray', borderWidth: 1, marginBottom: 15 }}></TextInput>
+                            <Text style={{ width: '90%', textAlign: "left" }}>Local</Text>
+                            <TextInput style={{ height: 40, width: '90%', borderColor: 'gray', borderWidth: 1, marginBottom: 15 }}></TextInput>
+                            <TouchableOpacity style={{ width: '50%', height: 50, backgroundColor: '#00F', borderRadius: 25, alignItems: "center", justifyContent: "center" }}>
+                                <Text style={{ color: '#FFF' }}>Salvar</Text>
+                            </TouchableOpacity>
                         </View>
-                    )}
-                    keyExtractor={item => item.id}
-                ></FlatList>
-            </View>
 
-        </LinearGradient>
+                    </LinearGradient>
+                </ScrollView>
+            </Modal>
+
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    difArea: {
-        height: '10%',
-        backgroundColor: '#109F6C',
-        width: '100%',
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    difText: {
-        color: '#FFF',
-        fontSize: 30,
-        fontWeight: "bold"
-    },
-    devicesArea: {
-        height: '70%',
-        alignItems: "center",
-        justifyContent: "flex-start"
-    },
-    device: {
-        alignItems: "center",
-        flexDirection: "row",
 
-        padding: 5,
-        width: 0.95 * width,
-        height: 0.075 * height,
-        //backgroundColor: '#00919C',
-        borderRadius: 5
-    },
-    deviceText: {
-        color: '#FFF',
-        marginLeft: 5
-    },
-    deviceDetails: {
-
-    },
-    deviceDetailsArea: {
-        //height: 200,
-        backgroundColor: 'blue',
-        padding: 20
-    },
-    btnArea: {
-        flexDirection: "row",
-        //height: 350,
-        backgroundColor: 'yellow',
-        justifyContent: "flex-end"
-    },
-    btnBuzzer: {
-        width: 50,
-        height: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        marginRight: 15,
-        padding: 10,
-        backgroundColor: '#0B7534',
-        borderRadius: 5
-    },
-    textBuzzer: {
-        color: '#FFF',
-        fontSize: 15
-    },
-    frequencyChange: {
-        flexDirection: "row",
-        marginRight: 15
-    },
-    frequencyInput: {
-        fontSize: 15,
-        textAlign: "center",
-        textAlignVertical: "center",
-        width: 50,
-        height: 50,
-        borderWidth: 1,
-        borderColor: '#999'
-    },
-    btnMoreFrequency: {
-        width: 50,
-        height: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 5,
-        borderWidth: 1,
-        borderLeftWidth: 0,
-        borderColor: '#0B7534',
-        backgroundColor: '#0B7534'
-    },
-    btnLessFrequency: {
-        width: 50,
-        height: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 5,
-        borderWidth: 1,
-        borderRightWidth: 0,
-        borderColor: '#D9534F',
-        backgroundColor: '#D9534F'
-    }
-
-})
+});
