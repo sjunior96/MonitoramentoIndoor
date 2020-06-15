@@ -119,9 +119,9 @@ export default function Home() {
                                     </LinearGradient>
                                 </TouchableOpacity>
                                 <View style={{ height: item.expanded ? 450 : 0, width: 0.95 * width, overflow: "hidden", marginBottom: 15, backgroundColor: '#FFF' }}>
-                                    <Text style={{ paddingLeft: 15, paddingTop: 15 }}>Nome do dispositivo: {item.name}</Text>
-                                    <Text style={{ paddingLeft: 15 }}>Local: Sala de reunião</Text>
-                                    <Text style={{ paddingLeft: 15 }}>Última Temperatura Registarda: 20°</Text>
+                                    <Text style={{ paddingLeft: 15, paddingTop: 15 }}>Nome do dispositivo: <Text style={{fontWeight: "bold"}}>{item.name}</Text></Text>
+                                    <Text style={{ paddingLeft: 15 }}>Local: <Text style={{fontWeight: "bold"}}>Sala de reunião</Text> </Text>
+                                    <Text style={{ paddingLeft: 15 }}>Última Temperatura Registarda: <Text style={{fontWeight: "bold"}}>20°</Text></Text>
                                     <View style={{ flexDirection: "row", width: 0.95 * width, alignItems: "center", justifyContent: "flex-end", padding: 20 }}>
                                         <Icon name="lightbulb" size={20}></Icon>
                                         <Switch
@@ -193,21 +193,18 @@ export default function Home() {
                         style={{ flex: 1, alignItems: "center", justifyContent: "center", borderTopLeftRadius: 25, borderTopRightRadius: 25, borderTopWidth: 0.25, elevation: 2, shadowColor: '#777' }}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
-                        colors={['#03A63C', '#00AB98']}
+                        colors={['#F28705', '#F2E205']}
                     >
-                        <View style={{ height: 1 * height, width: 1 * width, alignItems: "center", justifyContent: "center" }}>
+                        <View style={{ height: 1 * height, width: 1 * width, alignItems: "center", justifyContent: "flex-start" }}>
                             <TouchableOpacity style={{ width: '100%', alignItems: "center", justifyContent: "center" }} onPress={() => { setModalVisible(false) }}>
-                                <Icon name="chevron-down" size={30} color={'#FFF'}></Icon>
+                                <Icon name="chevron-down" size={30} color={'#000'}></Icon>
                             </TouchableOpacity>
 
-                            <Text style={{ fontSize: 25, marginBottom: 50 }}>Novo Dispositivo</Text>
-                            <Text style={{ width: 0.9 * width, textAlign: "left" }}>Key</Text>
-                            <TextInput style={{ height: 40, width: '90%', borderColor: 'gray', borderWidth: 1, marginBottom: 15 }}></TextInput>
-                            <Text style={{ width: '90%', textAlign: "left" }}>Nome do dispositivo</Text>
-                            <TextInput style={{ height: 40, width: '90%', borderColor: 'gray', borderWidth: 1, marginBottom: 15 }}></TextInput>
-                            <Text style={{ width: '90%', textAlign: "left" }}>Local</Text>
-                            <TextInput style={{ height: 40, width: '90%', borderColor: 'gray', borderWidth: 1, marginBottom: 15 }}></TextInput>
-                            <TouchableOpacity style={{ width: '50%', height: 50, backgroundColor: '#00F', borderRadius: 25, alignItems: "center", justifyContent: "center" }}>
+                            <Text style={{ fontSize: 25, marginBottom: 50, fontWeight: "bold" }}>Novo Dispositivo</Text>
+                            <TextInput placeholder="Key" placeholderTextColor={'#000'} style={{ height: 40, fontWeight: "bold" , width: '90%', borderColor: 'gray', borderBottomWidth: 1, marginBottom: 15 }}></TextInput>
+                            <TextInput placeholder="Nome do Dispositivo" placeholderTextColor={'#000'} style={{ height: 40, fontWeight: "bold", width: '90%', borderColor: 'gray', borderBottomWidth: 1, marginBottom: 15 }}></TextInput>
+                            <TextInput placeholder="Local" placeholderTextColor={'#000'} style={{ height: 40, fontWeight: "bold", width: '90%', borderColor: 'gray', borderBottomWidth: 1, marginBottom: 15 }}></TextInput>
+                            <TouchableOpacity style={{ width: '50%', height: 50, backgroundColor: '#00AB98', borderRadius: 25, alignItems: "center", justifyContent: "center" }}>
                                 <Text style={{ color: '#FFF' }}>Salvar</Text>
                             </TouchableOpacity>
                         </View>
