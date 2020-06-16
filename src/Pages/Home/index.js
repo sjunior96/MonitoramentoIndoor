@@ -21,9 +21,7 @@ export default function Home() {
     const [frequencyCounter, setFrequencyCounter] = useState(0);
     const [devices, setDevices] = useState([
         { key: 1, name: 'Dispositivo 1', expanded: false, lightState: true },
-        { key: 2, name: 'Dispositivo 2', expanded: false, lightState: false },
-        { key: 3, name: 'Dispositivo 3', expanded: false, lightState: true },
-        { key: 4, name: 'Dispositivo 4', expanded: false, lightState: false }
+        { key: 2, name: 'Dispositivo 2', expanded: false, lightState: false }
     ]);
     const [modalVisible, setModalVisible] = useState(false); //Define o modal como visivel ou não
 
@@ -62,6 +60,7 @@ export default function Home() {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         //let expand = !expanded; //Pegamos o oposto do valor atual de expanded, para abrir se estiver fechada, e fechar se estiver aberta
         //setExpanded(expand); //Passamos o novo valor para a expanded
+        setFrequencyCounter(0);
     }
 
     //Função que aumenta a frequência
@@ -80,6 +79,11 @@ export default function Home() {
         }
     }
 
+    //Função que envia comando para atualização da frequência de envio dos dados pelo dispositivo
+    function updateFrequency(deviceName, newFrequency){
+        alert("A frequência do " +  deviceName + " foi alterada para " + newFrequency + "!");
+    }
+
     return (
         // Container de toda a aplicação
         <View style={{ height: '100%', width: '100%' }}>
@@ -87,25 +91,12 @@ export default function Home() {
             <LinearGradient
                 style={{ flex: 1 }}
                 start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                colors={['#00AB98', '#00AB98']}>
-                {/* Um container para exibição do CDT, que também terá um degradê */}
-                <View style={{ height: '10%', width: '100%', marginBottom: 15 }}>
-                    {/* Gradient para deixar o CDT com degradê */}
-                    <LinearGradient
-                        style={{ flex: 1, borderBottomLeftRadius: 30, borderBottomRightRadius: 30, alignItems: "center", justifyContent: "center", shadowColor: '#777', elevation: 2, borderWidth: 0.25 }}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        colors={['#00AB98', '#03A63C']}
-                    >
-                        {/* Exibe o CDT */}
-                        <Text style={{ color: '#FFF', fontSize: 30, fontWeight: "bold" }}>CDT</Text>
-                        <Text style={{ color: '#FFF', fontSize: 30, fontWeight: "bold" }}>10°</Text>
-                    </LinearGradient>
-                </View>
+                end={{ x: 1, y: 1 }}
+                colors={['#00AB98', '#007266']}>
+
 
                 {/* Uma ScrollView que ocupará quase todo o restante da página, onde serão listados os dispositivos */}
-                <ScrollView style={{ height: '82.5%' }}>
+                <ScrollView style={{ height: '82.5%', marginTop: 15 }}>
                     {/* Este FlatList renderizará todos os dispositivos cadastrados de acordo com a necessidade (usuário vai scrollando, vai carregando mais, caso haja) */}
                     <FlatList
                         contentContainerStyle={{ height: '100%', width: 1.0 * width }}
@@ -123,7 +114,7 @@ export default function Home() {
                                         style={{ borderRadius: 5, width: '100%', flexDirection: "row", alignItems: "center" }}
                                     >
                                         {item.expanded ? //Se o item estiver expandido, mostra o ícone seta para cima
-                                            (<Icon style={{ marginLeft: 5 }} name="chevron-up" size={20} color={'#FFF'}></Icon>) 
+                                            (<Icon style={{ marginLeft: 5 }} name="chevron-up" size={20} color={'#FFF'}></Icon>)
                                             :
                                             //Se não, mostra o ícone seta para baixo 
                                             (<Icon style={{ marginLeft: 5 }} name="chevron-down" size={20} color={'#FFF'}></Icon>)
@@ -152,14 +143,14 @@ export default function Home() {
                                         />
                                     </View>
                                     {/* Gráfico para exemplificar design */}
-                                    <View style={{ width: '100%', height: 220, marginLeft: 0.095 * width, alignItems: "center", justifyContent: "center", borderWidth: 1 }}>
+                                    <View style={{ width: '90%', height: 220, marginLeft: '5%', alignItems: "center", justifyContent: "center", borderWidth: 1 }}>
                                         <Image style={{ width: 300, height: 200 }} source={require('../../assets/images/lineGraphic.png')}></Image>
                                     </View>
 
                                     {/* Container para a área dos botões */}
                                     <View style={{ flexDirection: "row", height: 75, width: '100%', marginTop: 15, justifyContent: "flex-end" }}>
-                                        {/* Botão do Buzzer */}
-                                        <TouchableOpacity>
+                                        {/* Botão para salvar a nova frequência */}
+                                        <TouchableOpacity onPress={() => {updateFrequency(item.name, frequencyCounter)}}>
                                             {/* Deixa o botão do Buzzer em Gradient */}
                                             <LinearGradient
                                                 start={{ x: 0, y: 0 }}
@@ -167,7 +158,7 @@ export default function Home() {
                                                 colors={['#03A63C', '#00AB98']}
                                                 style={{ width: 50, height: 50, alignItems: "center", justifyContent: "center", marginRight: 15, padding: 10, backgroundColor: '#0B7534', borderRadius: 5 }}>
                                                 {/* Ícone de buzina para simbolizar comando de mandar o buzzer apitar */}
-                                                <Icon name="bullhorn" color={'#FFF'} size={25}></Icon>
+                                                <Icon name="save" color={'#FFF'} size={25}></Icon>
                                             </LinearGradient>
                                         </TouchableOpacity>
 
@@ -193,66 +184,11 @@ export default function Home() {
                         keyExtractor={item => item.id}
                     ></FlatList>
                 </ScrollView>
-
-                {/*Botão para abrir o modal de cadastrar novo dispositivo */}
-                <TouchableOpacity onPress={() => { setModalVisible(true) }} style={{ backgroundColor: '#FFF', height: '7.5%', shadowColor: '#777', elevation: 2, borderTopWidth: 0.25 }}>
-                    {/* Gradient para o fundo do botão */}
-                    <LinearGradient
-                        style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        colors={['#00AB98', '#03A63C']}
-                    >
-                        {/* ícone de adicionar novo dispositivo */}
-                        <Icon name="plus" size={20} color={'#FFF'}></Icon>
-                        <Text style={{ color: '#FFF', fontSize: 18, fontWeight: "bold", marginLeft: 10 }}>Novo Dispositivo</Text>
-                    </LinearGradient>
-                </TouchableOpacity>
+                <View style={{ height: '7.5%', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ color: '#fff' }}>|D1 - D2| = <Text style={{ fontWeight: 'bold' }}>14</Text></Text>
+                    <Text style={{ color: '#fff' }}>Última atualização às: <Text style={{ fontWeight: 'bold' }}>14:00</Text></Text>
+                </View>
             </LinearGradient>
-
-            {/* Modal para cadastro de novo dispositivo */}
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                }}>
-                {/* Container scrollável para o modal */}
-                <ScrollView
-                    style={{ height: '100%', marginTop: '22%', borderTopLeftRadius: 25, borderTopRightRadius: 25, backgroundColor: '#FFF' }}
-                    contentContainerStyle={{ alignItems: "center", justifyContent: "center" }}>
-                        {/* Fundo Gradient para o modal */}
-                    <LinearGradient
-                        style={{ flex: 1, alignItems: "center", justifyContent: "center", borderTopLeftRadius: 25, borderTopRightRadius: 25, elevation: 20 }}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        colors={['#F28705', '#F2E205']}
-                    >
-                        {/* Container para o corpo do modal */}
-                        <View style={{ height: 1 * height, width: 1 * width, alignItems: "center", justifyContent: "flex-start" }}>
-                            {/* Botão de fechar modal, simbolizado pelo ícone de seta para baixo */}
-                            <TouchableOpacity style={{ width: '100%', alignItems: "center", justifyContent: "center" }} onPress={() => { setModalVisible(false) }}>
-                                <Icon name="chevron-down" size={30} color={'#000'}></Icon>
-                            </TouchableOpacity>
-                            {/* Título do Modal */}
-                            <Text style={{ fontSize: 25, marginBottom: 50, fontWeight: "bold" }}>Novo Dispositivo</Text>
-
-                            {/* Campos do modal */}
-                            <TextInput placeholder="Key" placeholderTextColor={'#000'} style={{ height: 40, fontWeight: "bold", width: '90%', borderColor: 'gray', borderBottomWidth: 1, marginBottom: 15 }}></TextInput>
-                            <TextInput placeholder="Nome do Dispositivo" placeholderTextColor={'#000'} style={{ height: 40, fontWeight: "bold", width: '90%', borderColor: 'gray', borderBottomWidth: 1, marginBottom: 15 }}></TextInput>
-                            <TextInput placeholder="Local" placeholderTextColor={'#000'} style={{ height: 40, fontWeight: "bold", width: '90%', borderColor: 'gray', borderBottomWidth: 1, marginBottom: 15 }}></TextInput>
-
-                            {/* Botão de Salvar, para efetuar cadastro de novo dispositivo, com os dados inseridos nos campos acima */}
-                            <TouchableOpacity style={{ width: '50%', height: 50, backgroundColor: '#00AB98', borderRadius: 25, alignItems: "center", justifyContent: "center" }}>
-                                <Text style={{ color: '#FFF' }}>Salvar</Text>
-                            </TouchableOpacity>
-                        </View>
-
-                    </LinearGradient>
-                </ScrollView>
-            </Modal>
-
         </View>
     );
 }
